@@ -107,16 +107,18 @@ dictionary = {
 ```
 becomes
 ```fsharp
-let intArray = [| 1; 2; 3 |]
-let intList = [ 4 ; 5 ; 6 ]
-let dic: IDictionary<string,int> = dict [ ("One", 1); ("Two", 2) ]
+let intArray: array<int> = [| 1; 2; 3 |]
+let intList: List<int> = [ 4 ; 5 ; 6 ]
+let dictionary: IDictionary<string,int> = dict [ ("One", 1); ("Two", 2) ]
 ```
 * Commas become semicolons when declaring elements of an array/list/dictionary.
-* `IEnumerable<T>` becomes `seq<'T>` (short for "sequence").
-* You use `dict` to initialize an `IDictionary<K,V>` collection, however in F#
-you would rather use a `Map<'K,'V>` because the latter is immutable.
+* You use `dict` to initialize an `IDictionary<string,int>` collection, however in F#
+you would rather use a `Map<string,int>` because the latter is immutable.
 
-(NOTE: generic types need the quote character (') as a prefix, as you might have noted above.)
+NOTE: if you were to create a collection type whose elements had a type that is not
+defined yet (it could change at runtime), then you have to use the quote character
+to denote those generic types. Example: instead of `Map<string,int>`, `Map<'K,'V>`,
+meaning `'K` is the key's type and `'V` is the value's type.
 
 
 ### Example 4: Basic blocks
