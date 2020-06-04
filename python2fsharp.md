@@ -177,7 +177,7 @@ DoStuff(reader)
 ```python
 def check(someParam1, someParam2):
     if someParam1 is not None:
-        stringBuilder.Append(someParam1.to_string());
+        stringBuilder.Append(someParam1.to_string())
 
     if someParam2 is not None:
         stringBuilder.Append("");
@@ -206,48 +206,35 @@ expression (pattern matching).
 * When you don't want to return anything, in python you just don't use the `return` statement, but in F# you need to return a special type called `unit`, which only has one possible value: `()`. That's why generally `()` means doing nothing (as per the above code).
 * A `match-with` block is almost like a switch block, but more succint because it includes the casting (to someValue).
 * There are three ways of ignoring things:
-  * For example, we don't care about the return value of Append(), in C# we just ignore it but in
-F# you need to be explicit about ignoring it, using the `ignore()` magic function.
-  * The underscore in a match expression: it's like a `default` in a C# `switch`.
-  * The underscore in `Some(_)`, when we want to make sure the value is not None, but we don't care
-about its contents (like an `is` operator in C#, instead of `as`).
-* The pipe operator (like in bash) is `|>` (and it works like in bash). Then `ignore(x)` is the same as `x |> ignore`.
-
+  * For example, let's say the `Append()` function returned some value, in python we just ignore it by not assigning it to a variable, but in F# you need to be explicit about ignoring it, using the `ignore()` magic function.
+  * The underscore in a match expression: it's like an `else` clause in a python `if`.
+  * The underscore in `Some(_)`, when we want to make sure the value is not None, but we don't care about its contents.
+* The pipe operator (like `|` in bash) is `|>` (and it works like in bash). Then `ignore(x)` is the same as `x |> ignore`.
 
 
 ### Example 6: Basic types
 
 This immutable C# class below is much easier to write in F#:
 
-```csharp
-public class Foo
-{
-    public Foo (int bar, string baz)
-    {
-        this.bar = bar;
-        this.baz = baz;
-    }
+```python
+class Foo(object):
 
-    readonly int bar;
-    public int Bar
-    {
-        get { return bar; }
-    }
+    def __init__(self, bar, baz):
+        self._bar = bar
+        self._baz = baz
 
-    readonly string baz;
-    public string Baz
-    {
-        get { return baz; }
-    }
-}
+    @property
+    def bar(self):
+        return self._bar
 
-static class FooFactory
-{
-    static internal Foo CreateFoo()
-    {
-        return new Foo(42, "forty-two");
-    }
-}
+    @property
+    def baz(self):
+        return self._baz
+
+class FooFactory(object):
+    @staticmethod
+    def create_foo():
+        return Foo(42, "forty-two")
 ```
 
 because it's just one line:
