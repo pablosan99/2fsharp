@@ -123,18 +123,17 @@ meaning `'K` is the key's type and `'V` is the value's type.
 
 ### Example 4: Basic blocks
 
-```csharp
-try {
-    TrySomething(someParam);
-} catch (SomeException ex) {
-    if (SomeCondition(ex)) {
-        DoSomethingElse(ex);
-        throw new OtherException();
-    } else
-        throw;
-} finally {
-    MakeSureToCleanup(someParam);
-}
+```python
+try:
+    try_something(someParam)
+except SomeError as err:
+    if some_condition(err):
+        do_something_else(err)
+        raise OtherError
+    else:
+        raise
+finally:
+    make_sure_to_cleanup(someParam)
 ```
 becomes
 ```fsharp
@@ -152,19 +151,17 @@ try
 finally
     MakeSureToCleanup(someParam)
 ```
-* The `catch` keyword becomes `with`.
-* The `throw X;` clause becomes `raise X`, and an empty `throw;` becomes the function call `reraise()`.
+* The `except` keyword becomes `with`.
+* The `raise X` is same in F#, but an empty `raise` becomes the function call `reraise()`.
 * However, there are no `try-with-finally` blocks! We have only `try-with` blocks and `try-finally` blocks. Therefore
 the equivalent in F# would need nesting (like it's done in the example above).
 
 You may think this is an F# downside but try-catch-finally blocks are extremely
-rare, especially given the `using` construct (for `IDisposable`) in C#:
+rare, especially given the `with` construct (for `Disposable` objects) in Python:
 
-```csharp
-using (var reader = new StreamReader(someFile))
-{
-    DoStuff(reader);
-}
+```python
+with Reader() as reader:
+    do_stuff(reader)
 ```
 which becomes
 ```fsharp
@@ -175,16 +172,15 @@ DoStuff(reader)
 * Therefore, the resource will be disposed when it goes out of scope (the function ends).
 
 
-### Example 5: Avoiding nulls and ignoring things
+### Example 5: Avoiding nulls (None) and ignoring things
 
-```csharp
-void Check(SomeType someParam1, SomeType someParam2)
-{
-    if (someParam1 != null)
-        stringBuilder.Append(someParam1.ToString());
+```python
+def check(someParam1, someParam2):
+    if someParam1 is not None:
+        stringBuilder.Append(someParam1.to_string());
 
-    if (someParam2 != null)
-        stringBuilder.Append(String.Empty);
+    if someParam2 is not None:
+        stringBuilder.Append("");
 }
 ```
 becomes
@@ -192,22 +188,22 @@ becomes
 let Check(someParam1: Option<SomeType>, someParam2: Option<SomeType>): unit =
 
     match someParam1 with
-    | Some(someValue) -> // like 'as' in C#, you cast and want the value
+    | Some(someValue) ->
         let str = someValue.ToString()
         ignore(stringBuilder.Append(str))
     | None -> ()
 
     match someParam2 with
-    | Some(_) -> // like 'is' in C#, you don't care about the value
+    | Some(_) ->
         stringBuilder.Append(String.Empty) |> ignore
     | _ -> ()
 
 ```
-In C# you write null checks everywhere (no safety at compile time). In F#,
-you do the null check in a safer way with an `Option<T>` type (similar to
-`Nullable<T>` but better) and a match expression (pattern matching).
+In python you write None checks everywhere (no safety at compile time). In F#,
+you do the null check in a safer way with an `Option<T>` type and a match
+expression (pattern matching).
 
-* When you don't want to return anything, in C# you use `void` which is metadata for specifying absence of a type, but in F#  you need to return a special type called `unit`, which only has one possible value: `()`. That's why generally `()` means doing nothing (as per the above code).
+* When you don't want to return anything, in python you just don't use the `return` statement, but in F# you need to return a special type called `unit`, which only has one possible value: `()`. That's why generally `()` means doing nothing (as per the above code).
 * A `match-with` block is almost like a switch block, but more succint because it includes the casting (to someValue).
 * There are three ways of ignoring things:
   * For example, we don't care about the return value of Append(), in C# we just ignore it but in
